@@ -1,0 +1,168 @@
+= Apache Ignite - Hadoop accelerator
+
+== Requisites
+You need a running hadoop system and administration roles.
+
+== Installing Apache Ignite Accelerator.
+
+Download the latest verion of binaries of hadoop accelerator (https://ignite.apache.org/download.cgi). It could take a
+while depending on your internet connection
+
+CAUTION: In ignite web download page you can download distinct packages, ensure you download ignite accelerator binaries
+(apache-ignite-hadoop-[version]-bin.zip)
+
+If you don't have installed zip package you must install them:
+
+.for Debian/Ubuntu like OS
+[source,shell script]
+----
+apt get install zip
+----
+.for RHEL like OS
+[source,shell script]
+----
+yum install zip
+----
+
+Unzip Ignite Accelerator and move it to correct path, we use /usr/local/ignite for suggerence you an example.
+[source,shell script]
+----
+unzip apache-ignite-hadoop-[version]-bin.zip
+mv apache-ignite-hadoop-[version]-bin /usr/local/ignite
+----
+
+Set IGNITE_HOME enviroment variable with path of ignite (path where now has moved it).
+
+TIP: In order that this variable always was fixed you can add this sentence in .bashrc file.
+[source,shell script]
+----
+export IGNITE_HOME /usr/local/ignite
+----
+
+Edit $IGNITE_HOME/config/defaul-config.xml. Find secondaryFileSystem property and uncomment. Next, change xml of filteSystemFactory
+with next xml block (note: if your Apache Ignite path isn't equals of this example,  you should change with yours)
+
+[source,xml]
+----
+<property name="secondaryFileSystem">
+    <bean class="org.apache.ignite.hadoop.fs.IgniteHadoopIgfsSecondaryFileSystem">
+        <property name="fileSystemFactory">
+            <bean class="org.apache.ignite.hadoop.fs.CachingHadoopFileSystemFactory">
+                <property name="uri" value="hdfs://hadoop_master:9000/"/>
+                <property name="configPaths">
+                    <list>
+                        <value>/usr/local/hadoop/etc/hadoop/core-site.xml</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+</property>
+----
+
+Start Ignite
+
+[source,shell script]
+----
+$IGNITE_HOME/bin/ignite.sh
+----
+
+TIP: You can start ignite ending with & if you like to continue working with same terminal
+
+IMPORTANT: Ignite uses lot of RAM you could need to manage and configure limitations. In mac its possible that sistem kills
+automatically Apache Ignite for this reason.
+
+== Configuring Hadoop
+
+It's important IGNITE_HOME environment variable is correctly set on your system.
+
+Create a symlink of Ignite Jars to Hadoop classpath.
+[source,shell script]
+----
+ln -s $IGNITE_HOME/libs/ignite-core-2.6.0.jar \
+    $IGNITE_HOME/libs/ignite-shmem-1.0.0.jar \
+    $IGNITE_HOME/libs/ignite-hadoop/ignite-hadoop-2.6.0.jar \
+    $HADOOP_HOME/share/hadoop/common/lib
+----
+
+It's needed to change hadoop configuration. It's recommendable do this changes in a separate folder and when we call hadoop
+tasks we can set this specific configuration or change hadoop configuration if we like that all process work with
+Apache Ignite. This explains how to do with a separated folder, if you want do for all process skip copy to folder step.
+
+.Copy hadoop file configurations to new folder
+[source,shell script]
+----
+mkdir ~/ignite_conf
+cd ~/ignite_conf
+cp $HADOOP_HOME/etc/hadoop/core-site.xml .
+cp $HADOOP_HOME/etc/hadoop/mapred-site.xml .
+----
+
+
+Edit `mapred-site.xml` and next properties ensure to change with these values. You host is hostname or ip where you have installed Apache Ignite.
+
+.mapred-site.xml
+[source,xml]
+----
+<property>
+    <name>mapreduce.framework.name</name>
+    <value>ignite</value>
+</property>
+<property>
+    <name>mapreduce.jobtracker.address</name>
+    <value>[your_host]:11211</value>
+</property>
+----
+
+If you like to use IGFS you need to change/add this properties on `core-site.xml` configuration file:
+.core-site.xml
+[source,xml]
+----
+<property>
+    <name>fs.defaultFS</name>
+    <value>igfs://igfs@/</value>
+</property>
+<property>
+    <name>fs.igfs.impl</name>
+    <value>org.apache.ignite.hadoop.fs.v1.IgniteHadoopFileSystem</value>
+</property>
+<property>
+    <name>fs.AbstractFileSystem.igfs.impl</name>
+    <value>org.apache.ignite.hadoop.fs.v2.IgniteHadoopFileSystem</value>
+</property>
+----
+
+== Executing
+
+You could view contain of IGFS running following statement.
+
+[source,shell script]
+----
+hadoop --config ~/ignite_conf fs -ls /
+----
+
+
+You could run a hadoop job with:
+
+[source,shell script]
+----
+hadoop --config ~/ignite_conf jar [your_job]
+----
+
+
+== Example
+We can take profit of hadoop example job wordcount. And we can run same example with and without Apache Ignite accelerator.
+
+For this example it isn't activated IGFS because in laptop no have enought memory.
+
+[source,shell script]
+----
+wget http://www.gutenberg.org/cache/epub/2000/pg2000.txt
+hdfs dfs -mkdir /in
+hdfs dfs -put pg2000.txt /in/pg2000.txt
+hadoop --config ~/ignite_conf jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.7.jar wordcount /in/pg2000.txt /out
+----
+
+
+== References:
+https://apacheignite-fs.readme.io/docs/installing-on-apache-hadoop

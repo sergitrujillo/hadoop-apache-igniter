@@ -1,0 +1,61 @@
+= Cluster Hadoop on your own computer with docker
+
+== Previous considerations
+
+These steps explain how you can run a hadoop cluster on your own computer. This is an explanation for demonstration purposes
+and this isn't designed to run in production environments.
+This example can run in linux or mac OS. In Windows OS is possible that some line endings are changed and can raise problems
+and finally this proposal may does not run properly.
+
+== Requisites
+
+* Internet Connection
+* Docker installed
+* Docker compose installed
+
+== Objective
+Build a Hadoop cluster. It will has one node master and 2 slaves.
+
+== Method
+Open terminal and go to this project root path.
+
+Start cluster:
+
+[source,shell script]
+----
+docker-compose -f hadoop-cluster.yml up -d
+----
+
+First run take a while bacause this proces need to download all tools and configure it.
+
+When all processes are finished you can acces on master to run that you need:
+
+[source,shell script]
+----
+docker exec -it hadoop-master /bin/bash
+----
+
+To stop cluster:
+
+[source,shell script]
+----
+docker-compose -f hadoop-cluster.yml down
+----
+
+To build a docker with Apache ignite:
+
+IMPORTANT: it requieres a lot of memory
+
+[source,shell script]
+----
+docker-compose -f hadoop-ignite-cluster.yml up
+docker exec -it hadoop-master /bin/bash
+docker-compose -f hadoop-ignite-cluster.yml down
+----
+
+Accés to hadoop information: http://localhost:8088/, http://localhost:50070/
+
+== References:
+https://docs.docker.com
+https://medium.com/@babloo80/docker-compose-for-apache-hadoop-hdfs-d949150f745a
+
