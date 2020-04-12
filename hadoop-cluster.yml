@@ -2,6 +2,9 @@ version: "3"
 
 services:
   hadoop-slave1:
+    build:
+        context: ./docker/base
+        dockerfile: Dockerfile
     image: sta/hadoop-cluster-base
     container_name: hadoop-slave1
     tty: true
@@ -10,6 +13,9 @@ services:
     container_name: hadoop-slave2
     tty: true
   hadoop-master:
+    build:
+      context: ./docker/master
+      dockerfile: Dockerfile
     image: sta/hadoop-cluster-master
     container_name: hadoop-master
     tty: true
