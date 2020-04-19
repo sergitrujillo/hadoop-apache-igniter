@@ -1,13 +1,14 @@
 = TESTING APACHE HADOOP AND APACHE IGNITE 
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 
 This repository contains some tests that are doing with Apache Hadoop and Apache Ignite.
 
 Tests ara managed using docker container technologies.
 
-- link:hadoop-docker[Making Hadoop cluster with docker]
+- link:hadoop-docker{outfilesuffix}[Making Hadoop cluster with docker]
 
-- link:ignite-mapreduce[Setting Ignite as a Mapreduce manager and HDFS cache. Hadoop Accelerator]
+- link:ignite-mapreduce{outfilesuffix}[Setting Ignite as a Mapreduce manager and HDFS cache. Hadoop Accelerator]
 
-- link:IgniteBasicJdbcTest/README[Basic Ignite Jdbc Tests]
+- link:IgniteBasicJdbcTest/README{outfilesuffix}[Basic Ignite Jdbc Tests]
 
  
