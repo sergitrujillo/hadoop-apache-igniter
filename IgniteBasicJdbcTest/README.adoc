@@ -1,0 +1,11 @@
+= PROJECT BASIC TO TEST APACHE IGNITE
+
+This test is realized with Apache Ignite 2.8.0 and prepared with jdk 1.8
+
+You need to start an apache ignite instance to run this examples.
+
+- Download Apache Ignite from : https://ignite.apache.org/download.cgi#binaries
+- unzip
+- start with: IGNITE_HOME/bin/ignite.sh
+
+Running IgniteMain class it test a basic SQL operation on Local ignite with standard JDBC instructions.
