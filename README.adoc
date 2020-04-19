@@ -1,0 +1,13 @@
+= TESTING APACHE HADOOP AND APACHE IGNITE 
+
+This repository contains some tests that are doing with Apache Hadoop and Apache Ignite.
+
+Tests ara managed using docker container technologies.
+
+- link:hadoop-docker[Making Hadoop cluster with docker]
+
+- link:ignite-mapreduce[Setting Ignite as a Mapreduce manager and HDFS cache. Hadoop Accelerator]
+
+- link:IgniteBasicJdbcTest/README[Basic Ignite Jdbc Tests]
+
+ 
